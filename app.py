@@ -246,30 +246,30 @@ st.markdown(
 )
 
 # ── API key check ─────────────────────────────────────────────────────────────
-if not (os.environ.get("GEMINI_API_KEY") or os.environ.get("gemini_api_key")):
+if not os.environ.get("GROQ_API_KEY"):
     st.markdown(
         """
     <div class='error-box'>
-      <strong>⚠ GEMINI_API_KEY not detected.</strong><br>
-      Set it before starting Streamlit:<br>
+      <strong>⚠ GROQ_API_KEY not detected.</strong><br>
+      Add your key to the <code>.env</code> file:<br><br>
+
       <code style='font-family:JetBrains Mono;'>
-        PowerShell → $env:GEMINI_API_KEY="your-key"<br>
-        bash/zsh   → export GEMINI_API_KEY="your-key"
-      </code><br>
-      Then rerun: <code>streamlit run app.py</code>
+      GROQ_API_KEY=your-key-here
+      </code><br><br>
+
+      Then restart Streamlit:
+      <code>streamlit run app.py</code>
     </div>
     """,
         unsafe_allow_html=True,
     )
     st.stop()
-
-
 # ════════════════════════════════════════════════════════════════════════════════
 #  INPUT PANEL
 # ════════════════════════════════════════════════════════════════════════════════
 st.markdown("### 📥 Financial Profile Input")
 with st.container():
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3 = st.columns(3)
     income = c1.number_input("Monthly Income (₹)", value=15000, step=500, min_value=1)
     expenses = c2.number_input(
         "Monthly Fixed Expenses (₹)", value=8000, step=500, min_value=0
@@ -277,9 +277,7 @@ with st.container():
     savings = c3.number_input(
         "Current Liquid Savings (₹)", value=30000, step=1000, min_value=0
     )
-    emi_months = c4.number_input(
-        "EMI Duration (months)", value=12, step=1, min_value=1, max_value=60
-    )
+
 
 st.markdown("### 🎯 Milestone Goal")
 with st.container():
@@ -290,7 +288,7 @@ with st.container():
 
 st.markdown("### 💳 Proposed Allocation Decision")
 with st.container():
-    dc1, dc2, dc3 = st.columns(3)
+    dc1, dc2, dc3, dc4 = st.columns(4)
     decision_query = dc1.text_input(
         "Decision Description", value="Buy a laptop for a coding course"
     )
@@ -299,6 +297,9 @@ with st.container():
     )
     proposed_emi = dc3.number_input(
         "Monthly EMI (₹ — 0 if paying outright)", value=3500, step=100, min_value=0
+    )
+    emi_months = dc4.number_input(
+        "EMI Duration (months)", value=12, step=1, min_value=1, max_value=60
     )
 
 # Quick sanity warning
