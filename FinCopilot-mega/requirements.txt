@@ -1,0 +1,27 @@
+# FinPilot — Unified Dependencies
+# Install: pip install -r requirements.txt
+
+# ── Core ──
+streamlit>=1.36.0
+python-dotenv>=1.0.0
+
+# ── AI / LLM ──
+groq>=0.9.0
+
+# ── Data / Viz ──
+pandas>=2.2.0
+numpy>=1.26.0
+plotly>=5.22.0
+pillow>=10.3.0
+
+# ── Machine Learning ──
+scikit-learn>=1.5.0
+joblib>=1.4.0
+
+# ── Reports ──
+openpyxl>=3.1.0
+
+# ── OCR (optional — install only if using Bill Scanner) ──
+# paddlepaddle>=2.6
+# paddleocr>=2.7
+# pypdfium2>=4.30
