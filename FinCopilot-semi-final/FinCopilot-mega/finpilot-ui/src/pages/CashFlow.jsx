@@ -4,25 +4,28 @@ import MetricCard from '../components/MetricCard';
 import ScoreGauge from '../components/ScoreGauge';
 import { CashFlowChart } from '../components/ProjectionChart';
 import { getCashFlowData, getTransactions, getHealthScore } from '../api/client';
+import { useProfile } from '../context/ProfileContext';
 
 export default function CashFlow() {
+  const { profile } = useProfile();
   const [cashflow, setCashflow] = useState(null);
   const [transactions, setTransactions] = useState([]);
   const [health, setHealth] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
-      getCashFlowData().catch(() => null),
-      getTransactions().catch(() => null),
-      getHealthScore().catch(() => null),
+      getCashFlowData(profile).catch(() => null),
+      getTransactions(profile).catch(() => null),
+      getHealthScore(profile).catch(() => null),
     ]).then(([cf, tx, h]) => {
       if (cf?.data) setCashflow(cf.data);
       if (tx?.data) setTransactions(tx.data.transactions?.slice(0, 20) || []);
       if (h?.data) setHealth(h.data);
       setLoading(false);
     });
-  }, []);
+  }, [profile]);
 
   const fmt = (v) => `₹${Number(v).toLocaleString('en-IN')}`;
 

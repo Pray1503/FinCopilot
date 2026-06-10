@@ -16,15 +16,16 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     Promise.all([
-      getHealthScore().catch(() => null),
-      getCashFlowData().catch(() => null),
+      getHealthScore(profile).catch(() => null),
+      getCashFlowData(profile).catch(() => null),
     ]).then(([h, cf]) => {
       if (h?.data) setHealth(h.data);
       if (cf?.data) setCashflow(cf.data);
       setLoading(false);
     });
-  }, []);
+  }, [profile]);
 
   const fmt = (v) => `₹${Number(v).toLocaleString('en-IN')}`;
 

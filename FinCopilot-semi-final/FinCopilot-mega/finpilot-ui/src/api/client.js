@@ -22,9 +22,18 @@ export const runSmartBoardroom = (scenario, question) =>
   API.post('/boardroom/smart', { scenario, question });
 
 // ── Cash Flow ───────────────────────────────────────────────────
-export const getCashFlowData = () => API.get('/cashflow/data');
-export const getTransactions = () => API.get('/cashflow/transactions');
-export const getHealthScore = () => API.get('/cashflow/health');
+export const getCashFlowData = (profile = null) =>
+  API.get('/cashflow/data', {
+    params: profile ? { income: profile.income_monthly, expenses: profile.monthly_expenses, savings: profile.savings } : {},
+  });
+export const getTransactions = (profile = null) =>
+  API.get('/cashflow/transactions', {
+    params: profile ? { income: profile.income_monthly, expenses: profile.monthly_expenses, savings: profile.savings } : {},
+  });
+export const getHealthScore = (profile = null) =>
+  API.get('/cashflow/health', {
+    params: profile ? { income: profile.income_monthly, expenses: profile.monthly_expenses, savings: profile.savings } : {},
+  });
 
 // ── Decision Simulator ─────────────────────────────────────────
 export const runSimulator = (params) =>

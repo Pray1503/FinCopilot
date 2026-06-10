@@ -21,17 +21,31 @@ LINE = "#1f2937"
 TEXT = "#e5e7eb"
 
 
-def generate_cash_flow_data() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Generate synthetic historical + forecasted cash-flow data."""
+def generate_cash_flow_data(
+    income: float = 42000,
+    expenses: float = 34500,
+    savings: float = 1260000,
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Generate synthetic historical + forecasted cash-flow data.
+    
+    Uses the user's profile numbers as the base for realistic generation:
+    - income → daily inflow mean
+    - expenses → daily outflow mean
+    - savings → starting balance
+    """
     rng = np.random.default_rng(7)
     start = pd.Timestamp(date.today() - timedelta(days=150))
     hist_dates = pd.date_range(start, periods=151, freq="D")
 
-    inflow = rng.normal(42000, 5200, len(hist_dates)).clip(28000, 62000)
-    outflow = rng.normal(34500, 6100, len(hist_dates)).clip(21000, 56000)
-    seasonal = 5200 * np.sin(np.linspace(0, 4.6 * np.pi, len(hist_dates)))
+    # Scale daily values from monthly profile (income/30, expenses/30)
+    daily_income = income / 30
+    daily_expense = expenses / 30
+
+    inflow = rng.normal(daily_income * 30, daily_income * 4, len(hist_dates)).clip(daily_income * 18, daily_income * 48)
+    outflow = rng.normal(daily_expense * 30, daily_expense * 5, len(hist_dates)).clip(daily_expense * 16, daily_expense * 42)
+    seasonal = (daily_income * 3.5) * np.sin(np.linspace(0, 4.6 * np.pi, len(hist_dates)))
     net = inflow - outflow + seasonal
-    balance = 1260000 + np.cumsum(net)
+    balance = savings + np.cumsum(net)
     historical = pd.DataFrame({
         "date": hist_dates,
         "inflow": inflow,
@@ -42,15 +56,15 @@ def generate_cash_flow_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     })
 
     future_dates = pd.date_range(hist_dates[-1] + pd.Timedelta(days=1), periods=45, freq="D")
-    drift = np.linspace(net[-1], 11800, len(future_dates))
-    noise = rng.normal(0, 2200, len(future_dates))
+    drift = np.linspace(net[-1], daily_income * 8, len(future_dates))
+    noise = rng.normal(0, daily_income * 1.5, len(future_dates))
     forecast_net = drift + noise
     forecast_balance = balance[-1] + np.cumsum(forecast_net)
-    confidence = np.linspace(22000, 108000, len(future_dates))
+    confidence = np.linspace(daily_income * 15, daily_income * 75, len(future_dates))
     forecast = pd.DataFrame({
         "date": future_dates,
-        "inflow": rng.normal(45500, 4300, len(future_dates)).clip(33000, 67000),
-        "outflow": rng.normal(33000, 4200, len(future_dates)).clip(22000, 52000),
+        "inflow": rng.normal(daily_income * 32, daily_income * 3, len(future_dates)).clip(daily_income * 22, daily_income * 48),
+        "outflow": rng.normal(daily_expense * 28, daily_expense * 3, len(future_dates)).clip(daily_expense * 16, daily_expense * 38),
         "net_cash_flow": forecast_net,
         "balance": forecast_balance,
         "lower": forecast_balance - confidence,
@@ -60,8 +74,12 @@ def generate_cash_flow_data() -> tuple[pd.DataFrame, pd.DataFrame]:
     return historical, forecast
 
 
-def generate_transactions() -> pd.DataFrame:
-    """Generate synthetic transaction data."""
+def generate_transactions(
+    income: float = 42000,
+    expenses: float = 34500,
+    savings: float = 1260000,
+) -> pd.DataFrame:
+    """Generate synthetic transaction data based on user profile."""
     rng = np.random.default_rng(9)
     categories = ["Housing", "Food", "Transport", "Utilities", "Entertainment", "Healthcare", "Payroll", "Investments", "Software"]
     descriptions = {
@@ -70,11 +88,12 @@ def generate_transactions() -> pd.DataFrame:
         "Payroll": "Salary credit", "Investments": "SIP / FD returns", "Software": "SaaS tools",
     }
     rows = []
-    balance = 2260000.0
+    balance = float(savings)
+    income_scale = income / 15000  # scale relative to base profile
     for day in pd.date_range(date.today() - timedelta(days=120), periods=120, freq="D"):
         category = rng.choice(categories, p=[0.12, 0.12, 0.08, 0.1, 0.08, 0.06, 0.2, 0.12, 0.12])
         is_income = category in ["Payroll", "Investments"] or rng.random() < 0.18
-        amount = float(rng.normal(122000, 37000) if is_income else -rng.normal(52000, 21000))
+        amount = float(rng.normal(income * 0.85, income * 0.25) if is_income else -rng.normal(expenses * 0.55, expenses * 0.22))
         balance += amount
         rows.append({
             "Date": day.date(), "Category": category, "Description": descriptions[category],

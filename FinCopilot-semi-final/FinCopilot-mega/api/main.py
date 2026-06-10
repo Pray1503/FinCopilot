@@ -160,11 +160,11 @@ def boardroom_smart(req: BoardroomRequest):
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 @app.get("/api/cashflow/data")
-def cashflow_data():
-    """Get historical + forecast cash flow data."""
+def cashflow_data(income: float = 42000, expenses: float = 34500, savings: float = 1260000):
+    """Get historical + forecast cash flow data, scaled by user profile."""
     try:
         from cashflow.engine import generate_cash_flow_data
-        hist, forecast = generate_cash_flow_data()
+        hist, forecast = generate_cash_flow_data(income=income, expenses=expenses, savings=savings)
         return {
             "historical": hist.to_dict(orient="records"),
             "forecast": forecast.to_dict(orient="records"),
@@ -174,22 +174,22 @@ def cashflow_data():
 
 
 @app.get("/api/cashflow/transactions")
-def cashflow_transactions():
-    """Get synthetic transaction data."""
+def cashflow_transactions(income: float = 42000, expenses: float = 34500, savings: float = 1260000):
+    """Get synthetic transaction data scaled by user profile."""
     try:
         from cashflow.engine import generate_transactions
-        txns = generate_transactions()
+        txns = generate_transactions(income=income, expenses=expenses, savings=savings)
         return {"transactions": txns.to_dict(orient="records")}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @app.get("/api/cashflow/health")
-def cashflow_health():
-    """Get financial health score and metrics."""
+def cashflow_health(income: float = 42000, expenses: float = 34500, savings: float = 1260000):
+    """Get financial health score and metrics, personalized to user profile."""
     try:
         from cashflow.engine import generate_cash_flow_data
-        hist, forecast = generate_cash_flow_data()
+        hist, forecast = generate_cash_flow_data(income=income, expenses=expenses, savings=savings)
 
         balance = float(hist["balance"].iloc[-1])
         inflow_30 = float(hist.tail(30)["inflow"].sum())
@@ -197,16 +197,23 @@ def cashflow_health():
         net_30 = inflow_30 - outflow_30
         predicted = float(forecast.tail(30)["balance"].iloc[-1])
 
-        # Simple health score
+        # Health score based on income-to-expense ratio and savings coverage
         ratio = inflow_30 / max(outflow_30, 1)
+        savings_months = savings / max(expenses, 1)  # emergency fund coverage
+        
+        base_score = 0
         if ratio >= 1.3:
-            score = 90
+            base_score = 85
         elif ratio >= 1.15:
-            score = 75
+            base_score = 70
         elif ratio >= 1.0:
-            score = 55
+            base_score = 50
         else:
-            score = 30
+            base_score = 25
+
+        # Bonus for savings coverage (up to +15 points)
+        savings_bonus = min(savings_months * 2.5, 15)
+        score = min(int(base_score + savings_bonus), 100)
 
         return {
             "score": score,
@@ -215,6 +222,7 @@ def cashflow_health():
             "outflow_30d": round(outflow_30),
             "net_30d": round(net_30),
             "predicted_balance": round(predicted),
+            "savings_months": round(savings_months, 1),
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -382,17 +390,43 @@ async def scan_bill(file: UploadFile = File(...)):
                 continue
 
             for line in page_result:
-                bbox, (text, conf) = line
-                text = str(text).strip()
-                if not text:
+                try:
+                    # PaddleOCR v3.6+ format: each line can be various structures
+                    if isinstance(line, dict):
+                        text = str(line.get("text", line.get("rec_text", ""))).strip()
+                        conf = float(line.get("confidence", line.get("rec_score", 0)))
+                    elif isinstance(line, (list, tuple)) and len(line) >= 2:
+                        # Try (bbox, (text, conf)) format first
+                        if isinstance(line[1], (list, tuple)) and len(line[1]) == 2:
+                            text = str(line[1][0]).strip()
+                            conf = float(line[1][1])
+                        # Or (text, conf) format
+                        elif isinstance(line[0], str):
+                            text = str(line[0]).strip()
+                            conf = float(line[1]) if len(line) > 1 else 0
+                        # Or [bbox, text, conf] format
+                        elif len(line) >= 3:
+                            text = str(line[1]).strip()
+                            conf = float(line[2])
+                        else:
+                            text = str(line[-1]).strip()
+                            conf = 0.5
+                    else:
+                        text = str(line).strip()
+                        conf = 0.5
+
+                    if not text:
+                        continue
+                    all_lines.append(text)
+                    confidences.append(conf)
+                    all_items.append({
+                        "page": page_num,
+                        "text": text,
+                        "confidence": round(conf, 4),
+                    })
+                except Exception:
+                    # Skip unparseable lines
                     continue
-                all_lines.append(text)
-                confidences.append(float(conf))
-                all_items.append({
-                    "page": page_num,
-                    "text": text,
-                    "confidence": round(float(conf), 4),
-                })
 
         raw_text = "\n".join(all_lines)
         avg_conf = round((sum(confidences) / len(confidences)) * 100, 2) if confidences else 0.0
