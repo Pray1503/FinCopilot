@@ -41,9 +41,9 @@ def generate_cash_flow_data(
     daily_income = income / 30
     daily_expense = expenses / 30
 
-    inflow = rng.normal(daily_income * 30, daily_income * 4, len(hist_dates)).clip(daily_income * 18, daily_income * 48)
-    outflow = rng.normal(daily_expense * 30, daily_expense * 5, len(hist_dates)).clip(daily_expense * 16, daily_expense * 42)
-    seasonal = (daily_income * 3.5) * np.sin(np.linspace(0, 4.6 * np.pi, len(hist_dates)))
+    inflow = rng.normal(daily_income , daily_income * 0.4, len(hist_dates)).clip(daily_income * 0.18, daily_income *0.48)
+    outflow = rng.normal(daily_expense , daily_expense *0.5, len(hist_dates)).clip(daily_expense *0.16, daily_expense *0.42)
+    seasonal = (daily_income * 0.5) * np.sin(np.linspace(0, 4.6 * np.pi, len(hist_dates)))
     net = inflow - outflow + seasonal
     balance = savings + np.cumsum(net)
     historical = pd.DataFrame({
@@ -75,9 +75,9 @@ def generate_cash_flow_data(
 
 
 def generate_transactions(
-    income: float = 42000,
-    expenses: float = 34500,
-    savings: float = 1260000,
+    income: float = 75000,    # Defaulting to your new profile
+    expenses: float = 72000,
+    savings: float = 150000,
 ) -> pd.DataFrame:
     """Generate synthetic transaction data based on user profile."""
     rng = np.random.default_rng(9)
@@ -89,12 +89,26 @@ def generate_transactions(
     }
     rows = []
     balance = float(savings)
-    income_scale = income / 15000  # scale relative to base profile
+    
+    # FIX: Scale the monthly profile down to daily averages
+    daily_income = income / 30
+    daily_expense = expenses / 30
+
     for day in pd.date_range(date.today() - timedelta(days=120), periods=120, freq="D"):
         category = rng.choice(categories, p=[0.12, 0.12, 0.08, 0.1, 0.08, 0.06, 0.2, 0.12, 0.12])
-        is_income = category in ["Payroll", "Investments"] or rng.random() < 0.18
-        amount = float(rng.normal(income * 0.85, income * 0.25) if is_income else -rng.normal(expenses * 0.55, expenses * 0.22))
+        # Define strict rules for what counts as income
+        income_categories = ["Payroll", "Investments", "Refund"]
+        
+        # Add a 5% chance that a random expense turns into a realistic "Refund" deposit
+        if category not in income_categories and rng.random() < 0.05:
+            category = "Refund"
+            descriptions["Refund"] = "Product return / Cashback"
+            
+        is_income = category in income_categories        
+        # FIX: Generate realistic single-transaction amounts based on daily averages
+        amount = float(rng.normal(daily_income * 3, daily_income) if is_income else -rng.normal(daily_expense * 2, daily_expense * 0.5))
         balance += amount
+        
         rows.append({
             "Date": day.date(), "Category": category, "Description": descriptions[category],
             "Amount": round(amount, 2), "Type": "Income" if amount >= 0 else "Expense",
