@@ -1,0 +1,694 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   FinPilot — Design System CSS
+   Dark-mode, glassmorphism, Inter/Geist typography
+   Extracted from Stitch design tokens
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Geist:wght@100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+
+/* ── Design Tokens ───────────────────────────────────────────────────────── */
+:root {
+  /* Backgrounds */
+  --bg-void:       #0A0A0A;
+  --bg-base:       #0E0E0E;
+  --bg-surface:    #131313;
+  --bg-raised:     #1A1A1A;
+  --bg-card:       #121212;
+  --bg-container:  #201F1F;
+  --bg-high:       #2A2A2A;
+  --bg-highest:    #353534;
+
+  /* Text */
+  --text-primary:  #E5E2E1;
+  --text-secondary:#C4C7C7;
+  --text-muted:    #8E9192;
+  --text-dim:      #94A3B8;
+  --text-faint:    rgba(255,255,255,0.5);
+
+  /* Accents */
+  --accent-violet: #8B5CF6;
+  --accent-indigo: #6366F1;
+  --accent-blue:   #818CF8;
+  --accent-emerald:#34D399;
+  --accent-amber:  #FBBF24;
+  --accent-red:    #F87171;
+  --accent-cyan:   #22D3EE;
+
+  /* Secondary palette from Stitch */
+  --secondary:     #C0C1FF;
+  --secondary-container: #3131C0;
+  --on-secondary:  #1000A9;
+
+  /* Borders */
+  --border-subtle: rgba(255,255,255,0.08);
+  --border-light:  rgba(255,255,255,0.12);
+  --border-medium: #444748;
+  --outline:       #8E9192;
+
+  /* Spacing */
+  --stack-xs: 4px;
+  --stack-sm: 8px;
+  --stack-md: 16px;
+  --stack-lg: 32px;
+  --gutter:   24px;
+  --container-max: 1200px;
+
+  /* Radius */
+  --radius-sm:  0.25rem;
+  --radius-md:  0.375rem;
+  --radius-lg:  0.5rem;
+  --radius-xl:  0.75rem;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-glow: 0 0 40px rgba(139,92,246,0.08);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.3), 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* ── Reset & Base ────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  font-weight: 400;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+::selection {
+  background: var(--secondary);
+  color: var(--on-secondary);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg-void); }
+::-webkit-scrollbar-thumb { background: var(--bg-high); border-radius: 10px; }
+
+/* ── Typography Scale ────────────────────────────────────────────────────── */
+.text-display-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.text-headline-md {
+  font-family: 'Inter', sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.text-headline-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.text-body-lg {
+  font-family: 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.text-body-sm {
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.text-label-caps {
+  font-family: 'Geist', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.text-mono {
+  font-family: 'Geist', monospace;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* ── Material Symbols ────────────────────────────────────────────────────── */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* ── Links ───────────────────────────────────────────────────────────────── */
+a {
+  color: var(--secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: var(--text-primary);
+}
+
+/* ── Glassmorphism ───────────────────────────────────────────────────────── */
+.glass-panel {
+  background: rgba(18, 18, 18, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ── Cards ────────────────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: var(--gutter);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.card:hover {
+  border-color: rgba(139, 92, 246, 0.2);
+  box-shadow: var(--shadow-glow);
+}
+
+/* ── AI Reasoning Block ──────────────────────────────────────────────────── */
+.ai-reasoning {
+  border-left: 2px solid var(--accent-violet);
+  background: rgba(139, 92, 246, 0.03);
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-family: 'Geist', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border: none;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-primary {
+  background: var(--text-primary);
+  color: var(--bg-void);
+}
+.btn-primary:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+}
+.btn-secondary:hover {
+  background: var(--bg-container);
+}
+.btn-ai {
+  background: rgba(139, 92, 246, 0.08);
+  color: var(--accent-violet);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+}
+.btn-ai:hover {
+  background: rgba(139, 92, 246, 0.15);
+}
+
+/* ── Inputs ───────────────────────────────────────────────────────────────── */
+.input {
+  width: 100%;
+  background: #050505;
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.input:focus {
+  border-color: var(--text-primary);
+}
+.input-pill {
+  border-radius: var(--radius-pill);
+  padding: 12px 20px;
+}
+
+/* ── Metric Cards ────────────────────────────────────────────────────────── */
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+}
+.metric-card .label {
+  font-family: 'Geist', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+.metric-card .value {
+  font-family: 'Geist', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.metric-card .delta {
+  font-size: 12px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.delta-positive { color: var(--accent-emerald); }
+.delta-negative { color: var(--accent-red); }
+
+/* ── Score Badge ─────────────────────────────────────────────────────────── */
+.score-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
+  font-family: 'Geist', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* ── Chat Bubbles ────────────────────────────────────────────────────────── */
+.chat-user {
+  background: linear-gradient(135deg, rgba(99,102,241,0.15), rgba(139,92,246,0.10));
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: 18px 18px 4px 18px;
+  padding: 14px 18px;
+  margin-left: 60px;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.chat-ai {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px 18px 18px 4px;
+  padding: 16px 20px;
+  margin-right: 60px;
+  color: var(--text-primary);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.intent-badge {
+  display: inline-block;
+  background: rgba(99,102,241,0.1);
+  color: var(--accent-blue);
+  border: 1px solid rgba(99,102,241,0.25);
+  border-radius: var(--radius-pill);
+  padding: 3px 12px;
+  font-family: 'Geist', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ── Agent / Debate Cards ────────────────────────────────────────────────── */
+.agent-card {
+  background: var(--bg-card);
+  border-left: 4px solid var(--border-medium);
+  padding: 16px 20px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-sm);
+  animation: slideIn 0.35s ease-out;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Verdict Headers ─────────────────────────────────────────────────────── */
+.verdict-header {
+  padding: 18px 24px;
+  border-radius: var(--radius-sm);
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1.15rem;
+  margin-bottom: 18px;
+}
+.verdict-go {
+  background: rgba(52,211,153,0.08);
+  color: var(--accent-emerald);
+  border: 1px solid var(--accent-emerald);
+}
+.verdict-delay {
+  background: rgba(251,191,36,0.08);
+  color: var(--accent-amber);
+  border: 1px solid var(--accent-amber);
+}
+.verdict-decline {
+  background: rgba(248,113,113,0.08);
+  color: var(--accent-red);
+  border: 1px solid var(--accent-red);
+}
+
+/* ── Gauge ────────────────────────────────────────────────────────────────── */
+.gauge-ring {
+  position: relative;
+  width: 180px;
+  height: 180px;
+}
+.gauge-ring svg {
+  transform: rotate(-90deg);
+}
+.gauge-ring .gauge-bg {
+  fill: none;
+  stroke: var(--bg-high);
+  stroke-width: 10;
+}
+.gauge-ring .gauge-fill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.gauge-value {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.gauge-value .number {
+  font-family: 'Geist', monospace;
+  font-size: 36px;
+  font-weight: 700;
+}
+.gauge-value .label {
+  font-family: 'Geist', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Timeline ────────────────────────────────────────────────────────────── */
+.timeline {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.timeline-node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 11px;
+  font-weight: 600;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  background: var(--bg-card);
+  transition: all 0.3s ease;
+}
+.timeline-node.active {
+  color: var(--accent-blue);
+  border-color: var(--accent-blue);
+  background: rgba(129, 140, 248, 0.08);
+}
+
+/* ── Layout Helpers ──────────────────────────────────────────────────────── */
+.layout-app {
+  display: flex;
+  min-height: 100vh;
+}
+.layout-sidebar {
+  width: 240px;
+  min-height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 40;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  padding: 20px 0;
+  display: flex;
+  flex-direction: column;
+}
+.layout-main {
+  flex: 1;
+  margin-left: 240px;
+  min-height: 100vh;
+}
+.layout-content {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: var(--gutter);
+}
+
+/* ── Navbar ───────────────────────────────────────────────────────────────── */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: 64px;
+  background: rgba(10, 10, 10, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  align-items: center;
+  padding: 0 var(--gutter);
+}
+
+/* ── Sidebar Nav ─────────────────────────────────────────────────────────── */
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover {
+  color: var(--text-primary);
+  background: rgba(255,255,255,0.03);
+}
+.nav-item.active {
+  color: var(--text-primary);
+  background: rgba(139, 92, 246, 0.06);
+  border-left-color: var(--accent-violet);
+}
+.nav-item .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ── Animations ──────────────────────────────────────────────────────────── */
+@keyframes float {
+  0%   { transform: translateY(0px); }
+  50%  { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+.animate-float { animation: float 6s ease-in-out infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, var(--bg-high) 25%, var(--bg-highest) 50%, var(--bg-high) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Grid Helpers ────────────────────────────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--stack-md); }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--stack-md); }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--stack-md); }
+.grid-12 { display: grid; grid-template-columns: repeat(12, 1fr); gap: var(--stack-md); }
+
+@media (max-width: 768px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+  .layout-sidebar { display: none; }
+  .layout-main { margin-left: 0; }
+}
+
+/* ── Recharts Overrides ──────────────────────────────────────────────────── */
+.recharts-cartesian-grid-horizontal line,
+.recharts-cartesian-grid-vertical line {
+  stroke: rgba(255,255,255,0.05);
+}
+.recharts-text {
+  fill: var(--text-muted) !important;
+  font-family: 'Geist', monospace !important;
+  font-size: 11px !important;
+}
+
+/* ── Profile Onboarding Modal ────────────────────────────────────────────── */
+.profile-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.profile-modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 40px 36px;
+  width: 400px;
+  max-width: 92vw;
+  box-shadow: 0 0 80px rgba(139, 92, 246, 0.08), 0 24px 48px rgba(0, 0, 0, 0.4);
+}
+
+.profile-intro {
+  text-align: center;
+}
+
+.profile-logo {
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(139, 92, 246, 0.08);
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.profile-cta {
+  padding: 12px 32px;
+  font-size: 13px;
+}
+
+.profile-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-field-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.profile-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.profile-currency {
+  position: absolute;
+  left: 14px;
+  font-family: 'Geist', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.profile-input {
+  width: 100%;
+  background: #050505;
+  color: var(--text-primary);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px 11px 32px;
+  font-family: 'Geist', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-input:focus {
+  border-color: var(--accent-violet);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.profile-input::placeholder {
+  color: var(--bg-highest);
+  font-weight: 400;
+}
+
+.profile-hint {
+  font-size: 11px;
+  color: var(--text-muted);
+  opacity: 0.7;
+  padding-left: 2px;
+}
+
+.profile-submit {
+  width: 100%;
+  padding: 13px 20px;
+  font-size: 13px;
+}
+
+.profile-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  background: var(--bg-high);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
